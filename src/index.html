@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <title>HotDog Token</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <script src="index.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2" style="text-align:center">
+        <h1 id="token-name">HotDog Token</h1>
+        <p id="token-total"></p>
+        <p id="token-address"></p>
+        <br>
+        <br>
+        <button type="button"
+          class="btn btn-info"
+          id="login"
+          data-toggle="modal"
+          data-target="#loginModal">
+          로그인
+        </button>
+        <button type="button"
+          class="btn btn-info"
+          id="logout"
+          style="display: none; text-align: center"
+          onclick="App.handleLogout()">
+          로그아웃
+        </button>
+        <br>
+        <br>
+        <a href="https://wallet.klaytn.com/" id="make-wallet">지갑 만들기</a>
+        <br>
+        <br>
+        <div id="address"></div>
+        <div id="balance"></div>
+
+        <button type="button" class="btn btn-default" id="send-button" style="width:500px; display: none;" onclick="App.showSendBox()">send</button>
+        
+        <div align="center" id="send-box" style="display: none">
+          <table>
+            <tr>
+              <td>
+                <label style="width: 60px; text-align: center">To</label>
+              </td>
+              <td>
+                <input style="width:440px;" type="text" id="recipient">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label style="width:60px; text-align: center">Hotdog</label>
+              </td>
+              <td>
+                <input style="width:440px" type="number" id="amount">
+              </td>
+            </tr>
+          </table>
+          <button type="button"
+                style="width:500px" 
+                class="btn btn-info" 
+                id="send-hotdog"
+                onclick="App.transfer()">
+                call
+          </button>
+        </div>
+        <br>
+
+        <button type="button" class="btn btn-default" id="test-send-button" style="width:500px; display: none;" onclick="App.showTestSendBox()">test send</button>
+        
+        <div align="center" id="test-send-box" style="display: none">
+          <table>
+            <tr>
+              <td>
+                <label style="width: 60px; text-align: center">To</label>
+              </td>
+              <td>
+                <input style="width:440px;" type="text" id="test-recipient">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label style="width:60px; text-align: center">Hotdog</label>
+              </td>
+              <td>
+                <input style="width:440px" type="number" id="test-amount">
+              </td>
+            </tr>
+          </table>
+          <button type="button"
+                style="width:500px" 
+                class="btn btn-info" 
+                id="test-send-hotdog"
+                onclick="App.testTransfer()">
+                call
+          </button>
+        </div>
+        <br>
+        <br>
+        <br>
+        <h3>account list for test</h3>
+        <p>account1 : </p><p id="account1" onclick="App.clipboard('#account1')">0x60fe885a3e79f27e9c5b40c0cda179b627cd9466</p>
+        <p>account2 : </p><p id="account2" onclick="App.clipboard('#account2')">0xf402f8d845e659b53858c9b0394a3224089aec26</p>
+
+        token : <span id="connected-token-address"></span><br>
+        <input style="width: 350px" type="text" id="input-token-address"><br>
+        <button class="btn btn-default" id="set-token" onclick="App.setToken()">connect to Token</button>
+        <br>
+
+        logic : <span id="connected-logic-address"></span><br>
+        <input style="width: 350px" type="text" id="input-logic-address"><br>
+        <button class="btn btn-default" id="set-logic" onclick="App.setLogic()">connect to Logic</button>
+        <br>
+
+        proxy : <span id="connected-proxy-address"></span><br>
+        <input style="width: 350px" type="text" id="input-proxy-address"><br>
+        <button class="btn btn-default" id="set-proxy" onclick="App.setLogic()">connect to Proxy</button>
+        <br>
+      </div>
+    </div>
+  </div>
+  
+  <div id="spin"></div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="loginModal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="keystore">Keystore</label>
+              <input type="file" id="keystore" onchange="App.handleImport()">
+            </div>
+            <div class="form-group">
+                <label for="input-password">비밀번호</label>
+                <input type="password" class="form-control" id="input-password" onchange="App.handlePassword()">
+                <p class="help-block" id="message"></p>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+            <button type="button" class="btn btn-primary" id="submit" onclick="App.handleLogin()">제출</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <br>
+</body>
+
+</html>
+
+<style>
+  .yellow-box {
+    background-color: #FFC;
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 500px;
+    font-size: 80px;
+  }
+  #timer {
+    font-size: 80px;
+    color: red;
+  }
+  @keyframes spinner-line-fade-more {
+    0%, 100% {
+      opacity: 0;
+    }
+    1% {
+      opacity: 1;
+    }
+  }
+  @keyframes spinner-line-fade-quick {
+    0%, 39%, 100% {
+      opacity: 0.25;
+    }
+    40% {
+      opacity: 1;
+    }
+  }
+  @keyframes spinner-line-fade-default {
+    0%, 100% {
+      opacity: 0.22;
+    }
+    1% {
+      opacity: 1;
+    }
+  }
+</style>
