@@ -11,6 +11,11 @@ module.exports = {
       network_id: NETWORK_ID,
       gas: GASLIMIT,
       gasPrice: null,
-    }
+    },
+    compilers: {
+      solc:{
+        version: "0.5.0",
+      },
+    },
   }
 }

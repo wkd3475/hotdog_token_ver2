@@ -1,9 +1,10 @@
 const Proxy = artifacts.require("Proxy");
 const fs = require('fs');
-const logicAddress = fs.readFileSync('../logicAddress', 'utf8').replace(/\n|\r/g, "")
+const logicAddress = fs.readFileSync('../logicAddress', 'utf8').replace(/\n|\r/g, "");
+const tokenAddress = fs.readFileSync('../tokenAddress', 'utf8').replace(/\n|\r/g, "")
 
 module.exports = function(deployer) {
-    deployer.deploy(Proxy, logicAddress)
+    deployer.deploy(Proxy, tokenAddress, logicAddress)
     .then(() => {
         if (Proxy._json) {
             fs.writeFile('proxyABI', JSON.stringify(Proxy._json.abi),

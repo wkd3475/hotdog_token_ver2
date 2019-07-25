@@ -11,7 +11,7 @@ contract Client {
     }
 
     function Send(address sender, address recipient, uint256 amount) public {
-        proxyAddress.delegatecall(abi.encodeWithSignature("Send(address, address, uint256)", sender, recipient, amount));
+        proxyAddress.call(abi.encodeWithSignature("Send(address, address, uint256)", sender, recipient, amount));
     }
 
     function setProxyAddress(address _address) public {

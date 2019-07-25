@@ -6,10 +6,13 @@ import "./Owner.sol";
 contract Proxy is Owner {
     address private _tokenAddress;
     uint256 eth = 10 ** 15;
+    uint256 test;
+    bool tf = false;
 
     address public _logicAddress;
 
-    constructor (address logicAddress) Owner() public {
+    constructor (address tokenAddress, address logicAddress) Owner() public {
+        _tokenAddress = tokenAddress;
         _logicAddress = logicAddress;
     }
 
@@ -22,6 +25,10 @@ contract Proxy is Owner {
 
     function getLogicAddress() public view returns (address) {
         return _logicAddress;
+    }
+
+    function getTokenAddress() public view returns(address) {
+        return _tokenAddress;
     }
 
     function () external payable {

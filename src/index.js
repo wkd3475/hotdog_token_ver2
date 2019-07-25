@@ -29,9 +29,8 @@ const App = {
             }
         }
         
-        $("#connected-token-address").text(await logicContract.methods.getTokenAddress().call());
-        $("#connected-logic-address").text(await proxyContract.methods.getLogicAddress().call());
-        $("#connected-proxy-address").text(await clientContract.methods.getProxyAddress().call());
+        const walletInstance = this.getWallet();
+        $("#approved-token").text(await tokenContract.methods.allowance(walletInstance.address, PROXY_ADDRESS).call() / UNIT);
         $('#token-total').text('total supply : ' + await tokenContract.methods.totalSupply().call()/UNIT);
         $('#token-address').text('contract address : ' + TOKEN_ADDRESS);
     },
@@ -153,76 +152,44 @@ const App = {
         }
     },
 
-    setToken: async function () {
-        let spinner = this.showSpinner();
-        let _address = $('#input-token-address').val().toString();
-        const walletInstance = this.getWallet();
-        await logicContract.methods.setTokenAddress(_address).send({
-            from: walletInstance.address,
-            gas: 250000,
-        });
-        $("#connected-token-address").text(await logicContract.methods.getTokenAddress().call());
-        spinner.stop();
-
-    },
-
-    setLogic: async function () {
-        let spinner = this.showSpinner();
-        let _address = $('#input-logic-address').val().toString();
-        const walletInstance = this.getWallet();
-        await proxyContract.methods.setTokenAddress(_address).send({
-            from: walletInstance.address,
-            gas: 250000,
-        });
-        $("#connected-logic-address").text(await proxyContract.methods.getTokenAddress().call());
-        spinner.stop();
-    },
-
     transfer: async function () {
-        try {
-            const walletInstance = this.getWallet();
-            if (walletInstance) {
-                var amount = BigInt(parseFloat($('#amount').val()) * UNIT).toString(10);
-                var recipient = $('#recipient').val().toString();
-                if (amount && recipient) {
-                    var spinner = this.showSpinner();
-                    await tokenContract.methods.transfer(recipient, amount).send({
+        const walletInstance = this.getWallet();
+        if (walletInstance) {
+            let amount = BigInt(parseFloat($('#amount').val()) * UNIT).toString(10);
+            let recipient = $('#recipient').val().toString();
+            if (amount && recipient) {
+                var spinner = this.showSpinner();
+                try {
+                    await tokenContract.methods.approve(PROXY_ADDRESS, amount).send({
                         from: walletInstance.address,
                         gas: 250000,
                     });
-                    spinner.stop();
-                    location.reload();
-                } else {
-                    alert("wrong input");
+                    await cav.klay.sendTransaction({
+                        from: walletInstance.address,
+                        to: PROXY_ADDRESS,
+                        gas: 250000,
+                        data: cav.klay.abi.encodeFunctionCall({
+                            name: 'send',
+                            type: 'function',
+                            inputs: [{
+                                type: 'address',
+                                name: 'recipient',
+                            }, {
+                                type: 'uint256',
+                                name: 'amount'
+                            }]
+                        }, [recipient, amount])
+                    });
+                } catch(e) {
+                    console.log('Transfer error: ', e);
                 }
-            }
-        } catch(e) {
-            console.log('transfer error: ', e);
-            spinner.stop();
-        }
-
-        $('#send-box').hide();
-    },
-
-    testTransfer: async function () {
-        const walletInstance = this.getWallet();
-        if (walletInstance) {
-            var amount = BigInt(parseFloat($('#test-amount').val()) * UNIT).toString(10);
-            var recipient = $('#test-recipient').val().toString();
-            if (amount && recipient) {
-                var spinner = this.showSpinner();
-                var result = await logicContract.methods.Send(walletInstance.address, recipient, amount).send({
-                    from: walletInstance.address,
-                    gas: 2500000,
-                });
-                alert(JSON.stringify(result));
                 spinner.stop();
-                //location.reload();
+                location.reload();
             } else {
                 alert("wrong input");
             }
         }
-        $('#test-send-box').hide();
+        $('#send-box').hide();
     },
 };
 
