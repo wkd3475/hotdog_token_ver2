@@ -1,8 +1,7 @@
 Klaytn Example
 
-npm run dev
-
-truffle deploy --compile-all --reset --network klaytn
+1. truffle deploy --compile-all --reset --network klaytn
+2. npm run dev
 
 - how to use proxy, proxyStorage
 - how to use caver
