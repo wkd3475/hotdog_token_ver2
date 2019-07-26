@@ -2,20 +2,16 @@
   "contractName": "Registry",
   "abi": [
     {
-      "constant": false,
-      "inputs": [],
-      "name": "he",
-      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
-      "type": "function"
+      "type": "fallback"
     }
   ],
-  "bytecode": "0x6080604052348015600f57600080fd5b5060868061001e6000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806333f1499e146044575b600080fd5b348015604f57600080fd5b5060566058565b005b5600a165627a7a723058206f50c0bffd09246d6139c0639d09b60889b76b7a43a64fb796c90938757e9c500029",
-  "deployedBytecode": "0x608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806333f1499e146044575b600080fd5b348015604f57600080fd5b5060566058565b005b5600a165627a7a723058206f50c0bffd09246d6139c0639d09b60889b76b7a43a64fb796c90938757e9c500029",
-  "sourceMap": "26:515:9:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;26:515:9;;;;;;;",
-  "deployedSourceMap": "26:515:9:-;;;;;;;;;;;;;;;;;;;;;;;;50:29;;8:9:-1;5:2;;;30:1;27;20:12;5:2;50:29:9;;;;;;;:::o",
-  "source": "pragma solidity ^0.4.24;\n\ncontract Registry {\n    function he() public {\n\n    }\n    // function upgrade(address[] proxy, address[] logic) public onlyOwner {\n    //     require(proxy.length > 0, \"zero length\");\n    //     require(proxy.length == logic.length, \"wrong input\");\n\n    //     for (uint8 i = 0; i < proxy.length; i++) {\n    //         (bool success) = proxy[i].call(abi.encodeWithSignature(\"chageLogic(address)\", logic[i]));\n    //         if(!success) {\n    //             revert(\"wrong\");\n    //         }\n    //     }\n    // }\n}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603e80601d6000396000f3006080604052348015600f57600080fd5b500000a165627a7a7230582035d0abc038c8742638d5b9ca067b07c62808851935c3d073d48bd1f18c0c91000029",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b500000a165627a7a7230582035d0abc038c8742638d5b9ca067b07c62808851935c3d073d48bd1f18c0c91000029",
+  "sourceMap": "26:513:9:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;26:513:9;;;;;;;",
+  "deployedSourceMap": "26:513:9:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;26:513:9;",
+  "source": "pragma solidity ^0.4.24;\n\ncontract Registry {\n    function () public {\n\n    }\n    // function upgrade(address[] proxy, address[] logic) public onlyOwner {\n    //     require(proxy.length > 0, \"zero length\");\n    //     require(proxy.length == logic.length, \"wrong input\");\n\n    //     for (uint8 i = 0; i < proxy.length; i++) {\n    //         (bool success) = proxy[i].call(abi.encodeWithSignature(\"chageLogic(address)\", logic[i]));\n    //         if(!success) {\n    //             revert(\"wrong\");\n    //         }\n    //     }\n    // }\n}",
   "sourcePath": "/Users/jang-yonghyeon/workspace/blockchain/klaytn/hotdog_token_ver2/contracts/Registry.sol",
   "ast": {
     "absolutePath": "/Users/jang-yonghyeon/workspace/blockchain/klaytn/hotdog_token_ver2/contracts/Registry.sol",
@@ -55,7 +51,7 @@
             "body": {
               "id": 1094,
               "nodeType": "Block",
-              "src": "71:8:9",
+              "src": "69:8:9",
               "statements": []
             },
             "documentation": null,
@@ -64,33 +60,33 @@
             "isConstructor": false,
             "isDeclaredConst": false,
             "modifiers": [],
-            "name": "he",
+            "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 1092,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "61:2:9"
+              "src": "59:2:9"
             },
             "payable": false,
             "returnParameters": {
               "id": 1093,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "71:0:9"
+              "src": "69:0:9"
             },
             "scope": 1096,
-            "src": "50:29:9",
+            "src": "50:27:9",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
         "scope": 1097,
-        "src": "26:515:9"
+        "src": "26:513:9"
       }
     ],
-    "src": "0:541:9"
+    "src": "0:539:9"
   },
   "legacyAST": {
     "absolutePath": "/Users/jang-yonghyeon/workspace/blockchain/klaytn/hotdog_token_ver2/contracts/Registry.sol",
@@ -130,7 +126,7 @@
             "body": {
               "id": 1094,
               "nodeType": "Block",
-              "src": "71:8:9",
+              "src": "69:8:9",
               "statements": []
             },
             "documentation": null,
@@ -139,33 +135,33 @@
             "isConstructor": false,
             "isDeclaredConst": false,
             "modifiers": [],
-            "name": "he",
+            "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 1092,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "61:2:9"
+              "src": "59:2:9"
             },
             "payable": false,
             "returnParameters": {
               "id": 1093,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "71:0:9"
+              "src": "69:0:9"
             },
             "scope": 1096,
-            "src": "50:29:9",
+            "src": "50:27:9",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
         "scope": 1097,
-        "src": "26:515:9"
+        "src": "26:513:9"
       }
     ],
-    "src": "0:541:9"
+    "src": "0:539:9"
   },
   "compiler": {
     "name": "solc",
@@ -173,5 +169,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.2",
-  "updatedAt": "2019-07-26T05:11:01.773Z"
+  "updatedAt": "2019-07-26T06:22:37.184Z"
 }

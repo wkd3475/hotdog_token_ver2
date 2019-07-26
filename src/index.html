@@ -48,16 +48,16 @@
         <div id="balance"></div>
         <div id="klay-amount"></div>
 
-        <button type="button" class="btn btn-default" id="send-button" style="width:500px; display: none;" onclick="App.showSendBox()">send</button>
+        <button type="button" class="btn btn-default" id="free-send-button" style="width:500px; display: none;" onclick="App.showFreeSendBox()">free send</button>
         
-        <div align="center" id="send-box" style="display: none">
+        <div align="center" id="free-send-box" style="display: none">
           <table>
             <tr>
               <td>
                 <label style="width: 60px; text-align: center">To</label>
               </td>
               <td>
-                <input style="width:440px;" type="text" id="recipient">
+                <input style="width:440px;" type="text" id="free-recipient">
               </td>
             </tr>
             <tr>
@@ -65,30 +65,30 @@
                 <label style="width:60px; text-align: center">Hotdog</label>
               </td>
               <td>
-                <input style="width:440px" type="number" id="amount">
+                <input style="width:440px" type="number" id="free-amount">
               </td>
             </tr>
           </table>
           <button type="button"
                 style="width:500px" 
                 class="btn btn-info" 
-                id="send-hotdog"
-                onclick="App.transfer()">
+                id="free-send-hotdog"
+                onclick="App.freeTransfer()">
                 call
           </button>
         </div>
         <br>
 
-        <button type="button" class="btn btn-default" id="test-send-button" style="width:500px; display: none;" onclick="App.showTestSendBox()">test send</button>
+        <button type="button" class="btn btn-default" id="fee-send-button" style="width:500px; display: none;" onclick="App.showFeeSendBox()">fee send</button>
         
-        <div align="center" id="test-send-box" style="display: none">
+        <div align="center" id="fee-send-box" style="display: none">
           <table>
             <tr>
               <td>
                 <label style="width: 60px; text-align: center">To</label>
               </td>
               <td>
-                <input style="width:440px;" type="text" id="test-recipient">
+                <input style="width:440px;" type="text" id="fee-recipient">
               </td>
             </tr>
             <tr>
@@ -96,15 +96,15 @@
                 <label style="width:60px; text-align: center">Hotdog</label>
               </td>
               <td>
-                <input style="width:440px" type="number" id="test-amount">
+                <input style="width:440px" type="number" id="fee-amount">
               </td>
             </tr>
           </table>
           <button type="button"
                 style="width:500px" 
                 class="btn btn-info" 
-                id="test-send-hotdog"
-                onclick="App.testTransfer()">
+                id="fee-send-hotdog"
+                onclick="App.feeTransfer()">
                 call
           </button>
         </div>

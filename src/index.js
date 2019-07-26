@@ -118,8 +118,8 @@ const App = {
         $('#address').append('<br>' + '<p>' + '지갑 주소 : ' + walletInstance.address + '</p>');
         $('#balance').append('<p>' + 'HotDog Token : ' + await this.balanceOf(walletInstance)/UNIT + '</p>');
         $('klay-amount').append('<p>' + 'klay : ' + '</p>');
-        $('#send-button').show();
-        $('#test-send-button').show();
+        $('#free-send-button').show();
+        $('#fee-send-button').show();
         spinner.stop();
     },
 
@@ -143,34 +143,34 @@ const App = {
         $temp.remove();
     },
 
-    showSendBox: async function () {
-        if ($('#send-box').is(':visible')) {
-            $('#send-box').hide();
+    showFreeSendBox: async function () {
+        if ($('#free-send-box').is(':visible')) {
+            $('#free-send-box').hide();
         } else {
-            $('#send-box').show()
+            $('#free-send-box').show()
         }
     },
 
-    showTestSendBox: async function () {
-        if ($('#test-send-box').is(':visible')) {
-            $('#test-send-box').hide();
+    showFeeSendBox: async function () {
+        if ($('#fee-send-box').is(':visible')) {
+            $('#fee-send-box').hide();
         } else {
-            $('#test-send-box').show()
+            $('#fee-send-box').show()
         }
     },
 
-    transfer: async function () {
+    freeTransfer: async function () {
         const walletInstance = this.getWallet();
         if (walletInstance) {
-            let amount = BigInt(parseFloat($('#amount').val()) * UNIT).toString(10);
-            let recipient = $('#recipient').val().toString();
+            let amount = BigInt(parseFloat($('#free-amount').val()) * UNIT).toString(10);
+            let recipient = $('#free-recipient').val().toString();
             if (amount && recipient) {
                 var spinner = this.showSpinner();
                 try {
                     await this.approve(walletInstance, PROXY_ADDRESS, amount);
-                    await this.feeFreeSend(walletInstance, recipient, amount);
+                    await this.freeSend(walletInstance, recipient, amount);
                 } catch(e) {
-                    console.log('Transfer error: ', e);
+                    console.log('free-Transfer error: ', e);
                 }
                 spinner.stop();
                 location.reload();
@@ -178,14 +178,14 @@ const App = {
                 alert("wrong input");
             }
         }
-        $('#send-box').hide();
+        $('#free-send-box').hide();
     },
 
-    testTransfer: async function () {
+    feeTransfer: async function () {
         const walletInstance = this.getWallet();
         if (walletInstance) {
-            let amount = BigInt(parseFloat($('#test-amount').val()) * UNIT).toString(10);
-            let recipient = $('#test-recipient').val().toString();
+            let amount = BigInt(parseFloat($('#fee-amount').val()) * UNIT).toString(10);
+            let recipient = $('#fee-recipient').val().toString();
             let num = await this.getNumGod();
             
             if (amount && recipient) {
@@ -194,7 +194,7 @@ const App = {
                     await this.approve(walletInstance, PROXY_ADDRESS, amount);
                     await this.feeSend(walletInstance, recipient, amount, num);
                 } catch(e) {
-                    console.log('testTransfer error: ', e);
+                    console.log('feeTransfer error: ', e);
                 }
                 spinner.stop();
                 location.reload();
@@ -202,7 +202,7 @@ const App = {
                 alert("wrong input");
             }
         }
-        $('#test-send-box').hide();
+        $('#fee-send-box').hide();
     },
 
     addGodAddress: async function() {
@@ -277,7 +277,7 @@ const App = {
         });
     },
 
-    feeFreeSend: async function (walletInstance, recipient, amount) {
+    freeSend: async function (walletInstance, recipient, amount) {
         await cav.klay.sendTransaction({
             from: walletInstance.address,
             to: PROXY_ADDRESS,
