@@ -1,9 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "./Owner.sol";
-
-contract Registry is Owner {
-    function he() public {
+contract Registry {
+    function () public {
 
     }
     // function upgrade(address[] proxy, address[] logic) public onlyOwner {

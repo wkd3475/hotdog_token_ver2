@@ -1,18 +1,17 @@
-const Client = artifacts.require("Client");
+const ProxyStorage = artifacts.require("ProxyStorage");
 const fs = require('fs');
-const proxyAddress = fs.readFileSync('../proxyAddress', 'utf8').replace(/\n|\r/g, "");
 
 module.exports = function(deployer) {
-    deployer.deploy(Client, proxyAddress)
+    deployer.deploy(ProxyStorage)
     .then(() => {
-        if (Client._json) {
-            fs.writeFile('clientABI', JSON.stringify(Client._json.abi),
+        if (ProxyStorage._json) {
+            fs.writeFile('proxyStorageABI', JSON.stringify(ProxyStorage._json.abi),
                 (err) => {
                     if (err) throw err;
                     console.log("파일에 ABI 입력 성공");
                 }
             )
-            fs.writeFile('clientAddress', Client.address,
+            fs.writeFile('proxyStorageAddress', ProxyStorage.address,
                 (err) => {
                     if (err) throw err;
                     console.log("파일에 주소 입력 성공");

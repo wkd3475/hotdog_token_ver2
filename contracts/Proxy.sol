@@ -1,45 +1,26 @@
 pragma solidity ^0.4.24;
 
 import "./SafeMath.sol";
-import "./Owner.sol";
+import "./ProxyStorage.sol";
 
-contract Proxy is Owner {
-    address private _tokenAddress;
-    uint256 eth = 10 ** 15;
-    uint256 test;
-    bool tf = false;
+contract Proxy {
+    address public _proxyStorageAddress;
 
-    address public _logicAddress;
-
-    constructor (address tokenAddress, address logicAddress) Owner() public {
-        _tokenAddress = tokenAddress;
-        _logicAddress = logicAddress;
-    }
-
-    event FallbackCalledEvent(bytes data);
-
-    function setLogicAddress(address _address) public onlyOwner {
-        require(_address != address(0), "error : zero address");
-        _logicAddress = _address;
-    }
-
-    function getLogicAddress() public view returns (address) {
-        return _logicAddress;
-    }
-
-    function getTokenAddress() public view returns(address) {
-        return _tokenAddress;
+    constructor(address proxyStorageAddress, address tokenAddress, address logicAddress) public {
+        require(proxyStorageAddress != address(0), "zero address");
+        _proxyStorageAddress = proxyStorageAddress;
+        ProxyStorage(_proxyStorageAddress).setTokenAddres(tokenAddress);
+        ProxyStorage(_proxyStorageAddress).setLogicAddress(logicAddress);
     }
 
     function () external payable {
-        emit FallbackCalledEvent(msg.data);
-        address contractAddr = _logicAddress;
-        require(contractAddr != address(0), "error : zero address");
+        address logicAddress = ProxyStorage(_proxyStorageAddress).getLogicAddress();
+        require(logicAddress != address(0), "error : zero address");
         
         assembly {
             let ptr := mload(0x40)
             calldatacopy(ptr, 0, calldatasize)
-            let result := delegatecall(gas, contractAddr, ptr, calldatasize, 0, 0)
+            let result := delegatecall(gas, logicAddress, ptr, calldatasize, 0, 0)
             let size := returndatasize
             returndatacopy(ptr, 0, size)
 
@@ -47,5 +28,10 @@ contract Proxy is Owner {
             case 0 { revert(ptr, size) }
             default { return(ptr, size) }
         }
+    }
+
+    function getGods() public view returns(address[]) {
+        address[] memory _god = ProxyStorage(_proxyStorageAddress).getGods();
+        return _god;
     }
 }

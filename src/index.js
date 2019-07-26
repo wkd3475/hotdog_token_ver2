@@ -8,8 +8,8 @@ const UNIT = 10**18;
 const cav = new Caver(config.rpcURL);
 const tokenContract = new cav.klay.Contract(TOKEN_ABI, TOKEN_ADDRESS);
 const logicContract = new cav.klay.Contract(LOGIC_ABI, LOGIC_ADDRESS);
+const proxyStorageContract = new cav.klay.Contract(PROXY_STORAGE_ABI, PROXY_STORAGE_ADDRESS);
 const proxyContract = new cav.klay.Contract(PROXY_ABI, PROXY_ADDRESS);
-const clientContract = new cav.klay.Contract(CLIENT_ABI, CLIENT_ADDRESS);
 
 const App = {
     auth: {
@@ -29,10 +29,16 @@ const App = {
             }
         }
         
-        const walletInstance = this.getWallet();
-        $("#approved-token").text(await tokenContract.methods.allowance(walletInstance.address, PROXY_ADDRESS).call() / UNIT);
-        $('#token-total').text('total supply : ' + await tokenContract.methods.totalSupply().call()/UNIT);
+        $('#token-total').text('total supply : ' + await this.totalSupply()/UNIT);
         $('#token-address').text('contract address : ' + TOKEN_ADDRESS);
+        $('#account1-klay').text(await this.getKlayBalance("0x60fe885a3e79f27e9c5b40c0cda179b627cd9466") + " peb");
+        $('#account2-klay').text(await this.getKlayBalance("0xf402f8d845e659b53858c9b0394a3224089aec26") + " peb");
+        $('#account3-klay').text(await this.getKlayBalance("0xfa50c5c818d98af46af11b1f6518d70377fc6d27") + " peb");
+    },
+
+    getKlayBalance: function (walletAddress) {
+        let balance = cav.klay.getBalance(walletAddress);
+        return balance;
     },
 
     handleImport: async function () {
@@ -110,7 +116,8 @@ const App = {
         $('#logout').show();
         $('#make-wallet').hide();
         $('#address').append('<br>' + '<p>' + '지갑 주소 : ' + walletInstance.address + '</p>');
-        $('#balance').append('<p>' + 'HotDog Token : ' + await tokenContract.methods.balanceOf(walletInstance.address).call()/UNIT + '</p>');
+        $('#balance').append('<p>' + 'HotDog Token : ' + await this.balanceOf(walletInstance)/UNIT + '</p>');
+        $('klay-amount').append('<p>' + 'klay : ' + '</p>');
         $('#send-button').show();
         $('#test-send-button').show();
         spinner.stop();
@@ -160,26 +167,8 @@ const App = {
             if (amount && recipient) {
                 var spinner = this.showSpinner();
                 try {
-                    await tokenContract.methods.approve(PROXY_ADDRESS, amount).send({
-                        from: walletInstance.address,
-                        gas: 250000,
-                    });
-                    await cav.klay.sendTransaction({
-                        from: walletInstance.address,
-                        to: PROXY_ADDRESS,
-                        gas: 250000,
-                        data: cav.klay.abi.encodeFunctionCall({
-                            name: 'send',
-                            type: 'function',
-                            inputs: [{
-                                type: 'address',
-                                name: 'recipient',
-                            }, {
-                                type: 'uint256',
-                                name: 'amount'
-                            }]
-                        }, [recipient, amount])
-                    });
+                    await this.approve(walletInstance, PROXY_ADDRESS, amount);
+                    await this.feeFreeSend(walletInstance, recipient, amount);
                 } catch(e) {
                     console.log('Transfer error: ', e);
                 }
@@ -190,6 +179,147 @@ const App = {
             }
         }
         $('#send-box').hide();
+    },
+
+    testTransfer: async function () {
+        const walletInstance = this.getWallet();
+        if (walletInstance) {
+            let amount = BigInt(parseFloat($('#test-amount').val()) * UNIT).toString(10);
+            let recipient = $('#test-recipient').val().toString();
+            let num = await this.getNumGod();
+            
+            if (amount && recipient) {
+                var spinner = this.showSpinner();
+                try {
+                    await this.approve(walletInstance, PROXY_ADDRESS, amount);
+                    await this.feeSend(walletInstance, recipient, amount, num);
+                } catch(e) {
+                    console.log('testTransfer error: ', e);
+                }
+                spinner.stop();
+                location.reload();
+            } else {
+                alert("wrong input");
+            }
+        }
+        $('#test-send-box').hide();
+    },
+
+    addGodAddress: async function() {
+        const walletInstance = this.getWallet();
+        let god = $('#god-address').val().toString();
+        var spinner = this.showSpinner();
+        let existGod = await this.existGod(god);
+
+        if(!existGod) {
+            await this.addGod(walletInstance, god);
+            let result = await this.getGods();
+            alert(JSON.stringify(result));
+            location.reload();
+        } else {
+            alert("already exist");
+        }
+
+        spinner.stop();
+        location.reload();
+    },
+
+    resetGodAddress: async function () {
+        const walletInstance = this.getWallet();
+        var spinner = this.showSpinner();
+        await this.deleteGods(walletInstance);
+        spinner.stop();
+        alert("reset");
+        location.reload();
+    },
+
+    getGods: async function () {
+        return await proxyStorageContract.methods.getGods().call();
+    },
+
+    deleteGods: async function (walletInstance) {
+        await proxyStorageContract.methods.deleteGods().send({
+            from: walletInstance.address,
+            gas: 250000,
+        });
+    },
+
+    getNumGod: async function () {
+        return await proxyStorageContract.methods.getNumGod().call();
+    },
+
+    addGod: async function (walletInstance, god) {
+        await proxyStorageContract.methods.addGod(god).send({
+            from: walletInstance.address,
+            gas: 250000,
+        });
+    },
+
+    existGod: async function (god) {
+        return await proxyStorageContract.methods.existGod(god).call();
+    },
+
+    totalSupply: async function () {
+        return await tokenContract.methods.totalSupply().call();
+    },
+
+    balanceOf: async function (walletInstance) {
+        return await tokenContract.methods.balanceOf(walletInstance.address).call();
+    },
+
+    approve: async function (walletInstance, target, amount) {
+        await tokenContract.methods.approve(target, amount).send({
+            from: walletInstance.address,
+            gas: 250000,
+        })
+        .on('receipt', function(receipt) {
+            alert(JSON.stringify(receipt));
+        });
+    },
+
+    feeFreeSend: async function (walletInstance, recipient, amount) {
+        await cav.klay.sendTransaction({
+            from: walletInstance.address,
+            to: PROXY_ADDRESS,
+            gas: 250000,
+            data: cav.klay.abi.encodeFunctionCall({
+                name: 'feeFreeSend',
+                type: 'function',
+                inputs: [{
+                    type: 'address',
+                    name: 'recipient',
+                }, {
+                    type: 'uint256',
+                    name: 'amount'
+                }]
+            }, [recipient, amount])
+        });
+    },
+
+    feeSend: async function (walletInstance, recipient, amount, num) {
+        let klay_amount = cav.utils.toPeb("0.1", "KLAY");
+        await cav.klay.sendTransaction({
+            from: walletInstance.address,
+            to: PROXY_ADDRESS,
+            gas: 250000,
+            value: klay_amount * num,
+            data: cav.klay.abi.encodeFunctionCall({
+                name: 'feeSend',
+                type: 'function',
+                inputs: [{
+                    type: 'address',
+                    name: 'recipient',
+                }, {
+                    type: 'uint256',
+                    name: 'amount'
+                }]
+            }, [recipient, amount])
+        })
+        .on('receipt', function(receipt) {
+            alert(JSON.stringify(receipt));
+        });
+
+        alert("complete");
     },
 };
 

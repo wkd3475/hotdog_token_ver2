@@ -46,6 +46,7 @@
         <br>
         <div id="address"></div>
         <div id="balance"></div>
+        <div id="klay-amount"></div>
 
         <button type="button" class="btn btn-default" id="send-button" style="width:500px; display: none;" onclick="App.showSendBox()">send</button>
         
@@ -112,9 +113,37 @@
         <br>
         <h3>account list for test</h3>
         <p>account1 : </p><p id="account1" onclick="App.clipboard('#account1')">0x60fe885a3e79f27e9c5b40c0cda179b627cd9466</p>
+        <p id="account1-klay"></p>
         <p>account2 : </p><p id="account2" onclick="App.clipboard('#account2')">0xf402f8d845e659b53858c9b0394a3224089aec26</p>
+        <p id="account2-klay"></p>
         <p>account3 : </p><p id="account3" onclick="App.clipboard('#account3')">0xfa50c5c818d98af46af11b1f6518d70377fc6d27</p>
-        
+        <p id="account3-klay"></p>
+        <div align="center">
+          <table>
+            <tr>
+              <td>
+                <label style="width: 60px; text-align: center">God</label>
+              </td>
+              <td>
+                <input style="width:440px;" type="text" id="god-address">
+              </td>
+            </tr>
+          </table>
+        </div>
+        <button type="button"
+              style="width:500px" 
+              class="btn btn-info" 
+              id="set-god-address"
+              onclick="App.addGodAddress()">
+              call
+        </button>
+        <button type="button"
+              style="width:500px" 
+              class="btn btn-info" 
+              id="set-god-address"
+              onclick="App.resetGodAddress()">
+              reset
+        </button>
       </div>
     </div>
   </div>

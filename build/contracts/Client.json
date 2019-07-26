@@ -390,7 +390,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1142,
+                            "referencedDeclaration": 1320,
                             "src": "307:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -708,7 +708,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1142,
+                            "referencedDeclaration": 1320,
                             "src": "528:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -1036,10 +1036,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1158,
-                        1159
+                        1336,
+                        1337
                       ],
-                      "referencedDeclaration": 1159,
+                      "referencedDeclaration": 1337,
                       "src": "687:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1535,7 +1535,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1142,
+                            "referencedDeclaration": 1320,
                             "src": "307:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -1853,7 +1853,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1142,
+                            "referencedDeclaration": 1320,
                             "src": "528:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -2181,10 +2181,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1158,
-                        1159
+                        1336,
+                        1337
                       ],
-                      "referencedDeclaration": 1159,
+                      "referencedDeclaration": 1337,
                       "src": "687:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2407,10 +2407,10 @@
     "1001": {
       "events": {},
       "links": {},
-      "address": "0xbad7ba86956bd29a54029d3c187e29035fff2485",
-      "transactionHash": "0x468a5c65d98b90af34ce31062e36ce6bae67327c86121500b9cedf86dae54ae2"
+      "address": "0x52bdc5be139facc0b9ce38a81970b81fb37a7d85",
+      "transactionHash": "0x862001657fa6dedaa41c7d8a15357e332fb1e49bd52cb29cb9d2e8b2b8c04f04"
     }
   },
   "schemaVersion": "2.0.2",
-  "updatedAt": "2019-07-25T01:59:16.812Z"
+  "updatedAt": "2019-07-26T05:08:58.001Z"
 }

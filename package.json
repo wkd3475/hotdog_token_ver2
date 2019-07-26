@@ -1,6 +1,6 @@
 {
   "name": "hotdog_token",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "toy project",
   "main": "truffle-config.js",
   "scripts": {
