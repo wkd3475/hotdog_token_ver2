@@ -51,6 +51,14 @@ contract ProxyStorage {
         _god_map[god] = god;
     }
 
+    // function addGods(address[] god) public onlyOwner {
+    //     uint256 length = god.length;
+    //     for(uint8 i=0; i<length; i++) {
+    //         _god.push(god[i]);
+    //         _god_map[god[i]] = god[i];
+    //     }
+    // }
+
     function deleteGods() public onlyOwner {
         uint256 length = getNumGod();
         for(uint8 i=0; i<length; i++) {
