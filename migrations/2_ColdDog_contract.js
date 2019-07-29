@@ -1,23 +1,22 @@
-const Proxy = artifacts.require("Proxy");
+const ColdDogToken = artifacts.require("ColdDogToken");
 const fs = require('fs');
-const proxyStorageAddress = fs.readFileSync('../proxyStorageAddress', 'utf8').replace(/\n|\r/g, "");
 
 module.exports = function(deployer) {
-    deployer.deploy(Proxy, proxyStorageAddress)
+    deployer.deploy(ColdDogToken)
     .then(() => {
-        if (Proxy._json) {
-            fs.writeFile('proxyABI', JSON.stringify(Proxy._json.abi),
+        if (HotDogToken._json) {
+            fs.writeFile('ColdDogTokenABI', JSON.stringify(ColdDogToken._json.abi),
                 (err) => {
                     if (err) throw err;
                     console.log("파일에 ABI 입력 성공");
                 }
             )
-            fs.writeFile('proxyAddress', Proxy.address,
+            fs.writeFile('ColdDogTokenAddress', ColdDogToken.address,
                 (err) => {
                     if (err) throw err;
                     console.log("파일에 주소 입력 성공");
                 }
             )
         }
-    });
+    })
 };

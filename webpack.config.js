@@ -20,6 +20,8 @@ module.exports = {
       PROXY_STORAGE_ABI: fs.existsSync('proxyStorageABI') && fs.readFileSync('proxyStorageABI', 'utf8'),
       PROXY_ADDRESS: JSON.stringify(fs.readFileSync('proxyAddress', 'utf8').replace(/\n|\r/g, "")),
       PROXY_ABI: fs.existsSync('proxyABI') && fs.readFileSync('proxyABI', 'utf8'),
+      COLDDOG_TOKEN_ADDRESS: JSON.stringify(fs.readFileSync('ColdDogTokenAddress', 'utf8').replace(/\n|\r/g, "")),
+      COLDDOG_TOKEN_ABI: fs.existsSync('ColdDogTokenABI') && fs.readFileSync('ColdDogTokenABI', 'utf8'),
     }),
     new CopyWebpackPlugin([{ from: "./src/index.html", to: "index.html"}])
   ],

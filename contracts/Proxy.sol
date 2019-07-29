@@ -6,11 +6,9 @@ import "./ProxyStorage.sol";
 contract Proxy {
     address public _proxyStorageAddress;
 
-    constructor(address proxyStorageAddress, address tokenAddress, address logicAddress) public {
+    constructor(address proxyStorageAddress) public {
         require(proxyStorageAddress != address(0), "zero address");
         _proxyStorageAddress = proxyStorageAddress;
-        ProxyStorage(_proxyStorageAddress).setTokenAddres(tokenAddress);
-        ProxyStorage(_proxyStorageAddress).setLogicAddress(logicAddress);
     }
 
     function () external payable {
@@ -33,5 +31,9 @@ contract Proxy {
     function getGods() public view returns(address[]) {
         address[] memory _god = ProxyStorage(_proxyStorageAddress).getGods();
         return _god;
+    }
+
+    function test(uint256[] feeAmount) public view returns(uint256[]) {
+        return feeAmount;
     }
 }

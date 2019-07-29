@@ -7,7 +7,6 @@ const config = {
 const UNIT = 10**18;
 const cav = new Caver(config.rpcURL);
 const tokenContract = new cav.klay.Contract(TOKEN_ABI, TOKEN_ADDRESS);
-const logicContract = new cav.klay.Contract(LOGIC_ABI, LOGIC_ADDRESS);
 const proxyStorageContract = new cav.klay.Contract(PROXY_STORAGE_ABI, PROXY_STORAGE_ADDRESS);
 const proxyContract = new cav.klay.Contract(PROXY_ABI, PROXY_ADDRESS);
 
@@ -30,7 +29,7 @@ const App = {
         }
         
         $('#token-total').text('total supply : ' + await this.totalSupply()/UNIT);
-        $('#token-address').text('contract address : ' + TOKEN_ADDRESS);
+        $('#token-address').text(TOKEN_ADDRESS);
         $('#account1-klay').text(await this.getKlayBalance("0x60fe885a3e79f27e9c5b40c0cda179b627cd9466") + " peb");
         $('#account2-klay').text(await this.getKlayBalance("0xf402f8d845e659b53858c9b0394a3224089aec26") + " peb");
         $('#account3-klay').text(await this.getKlayBalance("0xfa50c5c818d98af46af11b1f6518d70377fc6d27") + " peb");
@@ -120,6 +119,7 @@ const App = {
         $('klay-amount').append('<p>' + 'klay : ' + '</p>');
         $('#free-send-button').show();
         $('#fee-send-button').show();
+        $('#erc20-send-button').show();
         spinner.stop();
     },
 
@@ -143,11 +143,11 @@ const App = {
         $temp.remove();
     },
 
-    showFreeSendBox: async function () {
-        if ($('#free-send-box').is(':visible')) {
-            $('#free-send-box').hide();
+    showTokenSendBox: async function () {
+        if ($('#send-box').is(':visible')) {
+            $('#send-box').hide();
         } else {
-            $('#free-send-box').show()
+            $('#send-box').show()
         }
     },
 
@@ -159,18 +159,27 @@ const App = {
         }
     },
 
-    freeTransfer: async function () {
+    showERC20SendBox: async function () {
+        if ($('#erc20-send-box').is(':visible')) {
+            $('#erc20-send-box').hide();
+        } else {
+            $('#erc20-send-box').show()
+        }
+    },
+
+    tokenTransfer: async function () {
         const walletInstance = this.getWallet();
         if (walletInstance) {
-            let amount = BigInt(parseFloat($('#free-amount').val()) * UNIT).toString(10);
-            let recipient = $('#free-recipient').val().toString();
+            let amount = BigInt(parseFloat($('#token-amount').val()) * UNIT).toString(10);
+            let recipient = $('#recipient').val().toString();
+            let tokenAddress = $('#free-send-token-address').val().toString();
             if (amount && recipient) {
                 var spinner = this.showSpinner();
                 try {
                     await this.approve(walletInstance, PROXY_ADDRESS, amount);
-                    await this.freeSend(walletInstance, recipient, amount);
+                    await this.freeSend(walletInstance, tokenAddress, recipient, amount);
                 } catch(e) {
-                    console.log('free-Transfer error: ', e);
+                    console.log('Transfer error: ', e);
                 }
                 spinner.stop();
                 location.reload();
@@ -178,7 +187,7 @@ const App = {
                 alert("wrong input");
             }
         }
-        $('#free-send-box').hide();
+        $('#send-box').hide();
     },
 
     feeTransfer: async function () {
@@ -186,13 +195,14 @@ const App = {
         if (walletInstance) {
             let amount = BigInt(parseFloat($('#fee-amount').val()) * UNIT).toString(10);
             let recipient = $('#fee-recipient').val().toString();
+            let tokenAddress = $('#fee-send-token-address').val().toString();
             let num = await this.getNumGod();
             
             if (amount && recipient) {
                 var spinner = this.showSpinner();
                 try {
                     await this.approve(walletInstance, PROXY_ADDRESS, amount);
-                    await this.feeSend(walletInstance, recipient, amount, num);
+                    await this.feeSend(walletInstance, tokenAddress, recipient, amount, num);
                 } catch(e) {
                     console.log('feeTransfer error: ', e);
                 }
@@ -203,6 +213,67 @@ const App = {
             }
         }
         $('#fee-send-box').hide();
+    },
+
+    erc20Transfer: async function() {
+        const walletInstance = this.getWallet();
+        if (walletInstance) {
+            let amount = BigInt(parseFloat($('#erc20-amount').val()) * UNIT).toString(10);
+            let recipient = $('#erc20-recipient').val().toString();
+            let tokenAddress = $('#erc20-address').val().toString();
+            const NUM_GOD = 2;
+            const godList = ["0xf402f8d845e659b53858c9b0394a3224089aec26", "0xfa50c5c818d98af46af11b1f6518d70377fc6d27"];
+            const feeList = ['100000000000000000', '100000000000000000'];
+            
+            if (amount && recipient) {
+                var spinner = this.showSpinner();
+                try {
+                    await this.approveERC20Token(walletInstance, tokenAddress, PROXY_ADDRESS, amount);
+                    //NUM_GOD, godList, feeList는 이미 db에 저장된 값으로 정해니는 값임
+                    await this.erc20TokenSend(walletInstance, tokenAddress, recipient, amount, godList, feeList);
+                } catch(e) {
+                    console.log('feeTransfer error: ', e);
+                }
+                spinner.stop();
+                location.reload();
+            } else {
+                alert("wrong input");
+            }
+        }
+        $('#fee-send-box').hide();
+    },
+
+    erc20TokenSend: async function (walletInstance, tokenAddress, recipient, tokenAmount, godList, feeList) {
+        let totalFee = 0;
+        for(let i=0; i<feeList.length; i++) {
+            totalFee += parseInt(feeList[i]);
+        }
+        await cav.klay.sendTransaction({
+            from: walletInstance.address,
+            to: PROXY_ADDRESS,
+            gas: 250000,
+            value: totalFee,
+            data: cav.klay.abi.encodeFunctionCall({
+                name: 'erc20TokenSend',
+                type: 'function',
+                inputs: [{
+                    type: 'address',
+                    name: 'tokenAddress',
+                }, {
+                    type: 'address',
+                    name: 'recipient',
+                }, {
+                    type: 'uint256',
+                    name: 'tokenAmount'
+                }, {
+                    type: 'address[]',
+                    name: 'gods',
+                }, {
+                    type: 'uint256[]',
+                    name: 'feeAmount'
+                }]
+            }, [tokenAddress, recipient, tokenAmount, godList, feeList])
+        });
     },
 
     addGodAddress: async function() {
@@ -277,7 +348,18 @@ const App = {
         });
     },
 
-    freeSend: async function (walletInstance, recipient, amount) {
+    approveERC20Token: async function (walletInstance, tokenAddress, target, amount) {
+        //tokenAddress를 인자로 받아서 해당 토큰에 해당하는 constract에서 approve하게 해야함
+        await tokenContract.methods.approve(target, amount).send({
+            from: walletInstance.address,
+            gas: 250000,
+        })
+        .on('receipt', function(receipt) {
+            alert(JSON.stringify(receipt));
+        });
+    },
+
+    freeSend: async function (walletInstance, tokenAddress, recipient, amount) {
         await cav.klay.sendTransaction({
             from: walletInstance.address,
             to: PROXY_ADDRESS,
@@ -287,16 +369,19 @@ const App = {
                 type: 'function',
                 inputs: [{
                     type: 'address',
+                    name: 'tokenAddress'
+                }, {
+                    type: 'address',
                     name: 'recipient',
                 }, {
                     type: 'uint256',
                     name: 'amount'
                 }]
-            }, [recipient, amount])
+            }, [tokenAddress, recipient, amount])
         });
     },
 
-    feeSend: async function (walletInstance, recipient, amount, num) {
+    feeSend: async function (walletInstance, tokenAddress, recipient, amount, num) {
         let klay_amount = cav.utils.toPeb("0.1", "KLAY");
         await cav.klay.sendTransaction({
             from: walletInstance.address,
@@ -308,12 +393,15 @@ const App = {
                 type: 'function',
                 inputs: [{
                     type: 'address',
+                    name: 'tokenAddress'
+                }, {
+                    type: 'address',
                     name: 'recipient',
                 }, {
                     type: 'uint256',
                     name: 'amount'
                 }]
-            }, [recipient, amount])
+            }, [tokenAddress, recipient, amount])
         })
         .on('receipt', function(receipt) {
             alert(JSON.stringify(receipt));

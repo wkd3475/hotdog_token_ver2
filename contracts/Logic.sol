@@ -4,34 +4,32 @@ import "./HotDogToken.sol";
 import "./ProxyStorage.sol";
 
 contract Logic {
-
     address public _proxyStorageAddress;
 
-    // function multiSend(address recipient, address other1, address other2, uint256 amount) public payable returns(bool) {
-    //     address _tokenAddress = ProxyStorage(_proxyStorageAddress).getTokenAddress();
-    //     require(_tokenAddress != address(0), "zero address");
-    //     (bool success) = address(_tokenAddress).call(abi.encodeWithSignature("transfer(address,uint256)", recipient, amount));
-    //     other1.transfer(ProxyStorage(_proxyStorageAddress).eth);
-    //     other2.transfer(ProxyStorage(_proxyStorageAddress).eth);
-    //     if(!success) {
-    //         revert("wrong");
-    //     }
-
-    //     return (success);
-    // }
-
-    function feeFreeSend(address recipient, uint256 amount) public {
-        address _tokenAddress = ProxyStorage(_proxyStorageAddress).getTokenAddress();
-        HotDogToken(_tokenAddress).transferFrom(msg.sender, recipient, amount);
+    function feeFreeSend(address tokenAddress, address recipient, uint256 amount) public {
+        ERC20(tokenAddress).transferFrom(msg.sender, recipient, amount);
     }
 
-    function feeSend(address recipient, uint256 amount) public payable {
-        address _tokenAddress = ProxyStorage(_proxyStorageAddress).getTokenAddress();
+    function feeSend(address tokenAddress, address recipient, uint256 amount) public payable {
         address[] memory _god = ProxyStorage(_proxyStorageAddress).getGods();
-        HotDogToken(_tokenAddress).transferFrom(msg.sender, recipient, amount);
+        ERC20(tokenAddress).transferFrom(msg.sender, recipient, amount);
         uint256 length = ProxyStorage(_proxyStorageAddress).getNumGod();
         for(uint8 i=0; i<length; i++) {
             _god[i].transfer(ProxyStorage(_proxyStorageAddress).getValue());
+        }
+    }
+
+    function erc20TokenSend(address tokenAddress, address recipient, uint256 tokenAmount, address[] gods, uint256[] feeAmount) public payable {
+        require(tokenAddress != address(0), "wrong token address");
+        require(recipient != address(0), "wrong token address");
+        require(gods.length == feeAmount.length, "wrong gods' info");
+        uint256 balance = ERC20(tokenAddress).balanceOf(msg.sender);
+        if(tokenAmount > balance) {
+            return;
+        }
+        ERC20(tokenAddress).transferFrom(msg.sender, recipient, tokenAmount);
+        for(uint256 i=0; i<gods.length; i++) {
+            gods[i].transfer(feeAmount[i]);
         }
     }
 }

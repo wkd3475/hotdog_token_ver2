@@ -3,19 +3,19 @@ pragma solidity ^0.4.24;
 contract ProxyStorage {
     
     address private _owner;
-    address private _tokenAddress;
     uint256 eth = 10 ** 15;
     address[] private _god;
     mapping(address => address) _god_map;
     uint256 _value = 10 ** 17;
     address private _logicAddress;
 
-    constructor () public {
+    constructor (address logicAddress) public {
         _owner = msg.sender;
+        _logicAddress = logicAddress;
     }
 
      modifier onlyOwner() {
-        require(msg.sender != _owner, "not owner");
+        require(msg.sender == _owner, "not owner");
         _;
     }
 
@@ -31,15 +31,6 @@ contract ProxyStorage {
 
     function getLogicAddress() public view returns (address) {
         return _logicAddress;
-    }
-
-    function setTokenAddres(address _address) public onlyOwner {
-        require(_address != address(0), "error : zero address");
-        _tokenAddress = _address;
-    }
-
-    function getTokenAddress() public view returns(address) {
-        return _tokenAddress;
     }
 
     function getNumGod() public view returns(uint256) {

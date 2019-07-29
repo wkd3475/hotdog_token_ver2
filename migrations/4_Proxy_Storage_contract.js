@@ -1,8 +1,9 @@
 const ProxyStorage = artifacts.require("ProxyStorage");
 const fs = require('fs');
+const logicAddress = fs.readFileSync('../logicAddress', 'utf8').replace(/\n|\r/g, "");
 
 module.exports = function(deployer) {
-    deployer.deploy(ProxyStorage)
+    deployer.deploy(ProxyStorage, logicAddress)
     .then(() => {
         if (ProxyStorage._json) {
             fs.writeFile('proxyStorageABI', JSON.stringify(ProxyStorage._json.abi),
